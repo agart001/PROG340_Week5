@@ -61,7 +61,7 @@ scene.add(cyl);
 const gui = new DAT.GUI();
 var guiOptions = {color: 0x0000FF};
 gui.addColor(guiOptions, 'color').onChange(function (value) {
-    box.material.color.setHex(value);
+    torus.material.color.setHex(value);
 });
 
 var guiOptions2 = {wireframe: true};
