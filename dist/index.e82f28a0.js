@@ -579,12 +579,14 @@ var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
 var _datGui = require("dat.gui");
 var height = window.innerHeight;
 var width = window.innerWidth;
+const camera = new _three.PerspectiveCamera(45, width / height, 0.1, 1000);
 const scene = new _three.Scene();
+const textureLoader = new _three.TextureLoader();
+scene.background = textureLoader.load("../img/grid.jpg");
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
-const camera = new _three.PerspectiveCamera(45, width / height, 0.1, 1000);
 const axesHelper = new _three.AxesHelper(3);
 scene.add(axesHelper);
 const OrbControls = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.domElement);
@@ -600,21 +602,22 @@ plane.receiveShadow = true;
 scene.add(plane);
 const gridHelper = new _three.GridHelper(30, 30);
 scene.add(gridHelper);
-const box_geo = new _three.BoxGeometry(1, 1, 1);
-const box_mat = new _three.MeshBasicMaterial({
+const tor_geo = new _three.TorusGeometry(2, 1, 16, 64);
+const tor_mat = new _three.MeshStandardMaterial({
     color: 0x00ff00
 });
-const box = new _three.Mesh(box_geo, box_mat);
-scene.add(box);
-const sphere_geo = new _three.SphereGeometry(2, 60, 60);
-const sphere_mat = new _three.MeshStandardMaterial({
-    color: 0x0000FF,
-    wireframe: true
+const torus = new _three.Mesh(tor_geo, tor_mat);
+torus.position.set(5, 5, 10);
+torus.castShadow = true;
+scene.add(torus);
+const cyl_geo = new _three.CylinderGeometry(3.75, .15, 5, 20);
+const cyl_mat = new _three.MeshStandardMaterial({
+    color: 0x0000FF
 });
-const sphere = new _three.Mesh(sphere_geo, sphere_mat);
-sphere.position.set(-10, 50, 0);
-sphere.castShadow = true;
-scene.add(sphere);
+const cyl = new _three.Mesh(cyl_geo, cyl_mat);
+cyl.position.set(-5, 5, -5);
+cyl.castShadow = true;
+scene.add(cyl);
 //gui
 const gui = new _datGui.GUI();
 var guiOptions = {
@@ -627,7 +630,7 @@ var guiOptions2 = {
     wireframe: true
 };
 gui.add(guiOptions2, "wireframe").onChange(function(value) {
-    sphere.material.wireframe = value;
+    cyl.material.wireframe = value;
 });
 var angle = 0;
 var guiOptions3 = {
@@ -635,35 +638,38 @@ var guiOptions3 = {
 };
 gui.add(guiOptions3, "speed", 0, 1);
 //light
-const ambientLight = new _three.AmbientLight(0x000000);
+const directionalLight = new _three.DirectionalLight(0xFFFFFF, 1);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.scale.set(3, 2.5, 2);
+directionalLight.position.set(-20, 20, 0);
+const directionalLightHelper = new _three.DirectionalLightHelper(directionalLight);
+const ambientLight = new _three.AmbientLight(0xFFFFFF, 0.3);
+const cameraHelper = new _three.CameraHelper(directionalLight.shadow.camera);
+scene.add(cameraHelper);
+scene.add(directionalLight);
+scene.add(directionalLightHelper);
 scene.add(ambientLight);
-const spotlight = new _three.SpotLight(0xFFFFFF);
-spotlight.castShadow = true;
-spotlight.position.set(-20, 20, 0);
-const spotlightHelper = new _three.SpotLightHelper(spotlight);
-scene.add(spotlight);
-scene.add(spotlightHelper);
 const gui_op_angle = {
-    angle: 0
+    angle: 0.0
 };
 const gui_op_pneumbra = {
-    pneumbra: 0
+    pneumbra: 0.0
 };
 const gui_op_intensity = {
-    intensity: 0
+    intensity: 0.0
 };
-gui.add(gui_op_angle, "angle", 0, 1);
-gui.add(gui_op_pneumbra, "pneumbra", 0, 1);
-gui.add(gui_op_intensity, "intensity", 0, 1);
+gui.add(gui_op_angle, "angle", 0.0, 1.0);
+gui.add(gui_op_pneumbra, "pneumbra", 0.0, 1.0);
+gui.add(gui_op_intensity, "intensity", 0.0, 1.0);
 function animate(time) {
-    spotlight.angle = gui_op_angle.angle;
-    spotlight.pneumbra = gui_op_pneumbra.pneumbra;
-    spotlight.intensity = gui_op_intensity.intensity;
-    spotlightHelper.update();
-    box.rotation.x = time / 1000;
-    box.rotation.y = time / 1000;
+    directionalLight.angle = gui_op_angle.angle;
+    directionalLight.pneumbra = gui_op_pneumbra.pneumbra;
+    directionalLight.intensity = gui_op_intensity.intensity;
+    directionalLightHelper.update();
+    torus.rotation.x = time / 1000;
+    torus.rotation.y = time / 1000;
     angle += guiOptions3.speed;
-    sphere.position.y = Math.abs(Math.sin(angle)) * 10;
+    cyl.position.x = Math.sin(angle) * 5;
     renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
