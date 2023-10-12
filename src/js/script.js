@@ -11,8 +11,11 @@ const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
 
 const scene = new THREE.Scene();
 
-const textureLoader = new THREE.TextureLoader();
-scene.background = textureLoader.load('../img/grid.jpg');
+const cubeLoader = new THREE.CubeTextureLoader();
+var grid_img = document.getElementById('grid').src;
+var top_img = document.getElementById('top').src;
+var bottom_img = document.getElementById('bottom').src;
+scene.background = cubeLoader.load([grid_img, grid_img, top_img, bottom_img, grid_img, grid_img]);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -32,6 +35,7 @@ const plane_mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
 const plane = new THREE.Mesh(plane_geo, plane_mat);
 plane.rotation.x = -Math.PI / 2;
 plane.receiveShadow = true;
+plane.fog = true;
 scene.add(plane);
 
 const gridHelper = new THREE.GridHelper(30, 30);
@@ -42,6 +46,7 @@ const tor_mat = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 const torus = new THREE.Mesh(tor_geo, tor_mat);
 torus.position.set(5, 5, 10);
 torus.castShadow = true;
+torus.fog = true;
 scene.add(torus);
 
 const cyl_geo = new THREE.CylinderGeometry(3.75, .15, 5, 20);
@@ -49,6 +54,7 @@ const cyl_mat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
 const cyl = new THREE.Mesh(cyl_geo, cyl_mat);
 cyl.position.set(-5,5,-5);
 cyl.castShadow = true;
+cyl.fog = true;
 scene.add(cyl);
 
 //gui
@@ -84,6 +90,10 @@ scene.add(cameraHelper);
 scene.add(directionalLight);
 scene.add(directionalLightHelper);
 scene.add(ambientLight);
+
+//fog
+const fog = new THREE.Fog(0xFFC0CB, 10, 100);
+scene.fog = fog;
 
 
 const gui_op_angle = {angle: 0.0};
