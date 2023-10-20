@@ -9,6 +9,20 @@
     <img id="grid" src="./img/grid.jpg" style="display: none; width: 0; height: 0;">
     <img id="top" src="./img/top.png" style="display: none; width: 0; height: 0;">
     <img id="bottom" src="./img/bottom.png" style="display: none; width: 0; height: 0;">
+
+    <script id="vertexShader" type="vertex">
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    </script>
+
+    <script id="fragmentShader" type="fragment">
+        void main() {
+            gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);
+        }
+
+    </script>
+
     <script src="./js/script.js" type="module"></script>
 </body>
 </html>

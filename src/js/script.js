@@ -3,6 +3,23 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 
 import * as DAT from "dat.gui";
 
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+const duckUrl = new URL('../assets/Duck.gltf', import.meta.url);
+const assetLoader = new GLTFLoader();
+assetLoader.load(
+    duckUrl.href,
+    function(gltf) {
+        const model = gltf.scene;
+        scene.add(model);
+        model.position.set(0, 0, 0);
+    },
+    undefined,
+    function(error) {
+        console.error(error);
+    }
+);
+
 var height = window.innerHeight;
 var width = window.innerWidth;
 
@@ -30,6 +47,14 @@ const OrbControls = new OrbitControls(camera, renderer.domElement);
 camera.position.set(-10, 30, 30);
 OrbControls.update();
 
+//shaders
+
+const shaderMat = new THREE.ShaderMaterial({
+    vertexShader: document.getElementById('vertexShader').textContent,
+    fragmentShader: document.getElementById('fragmentShader').textContent
+});
+
+
 const plane_geo = new THREE.PlaneGeometry(30, 30);
 const plane_mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
 const plane = new THREE.Mesh(plane_geo, plane_mat);
@@ -38,12 +63,30 @@ plane.receiveShadow = true;
 plane.fog = true;
 scene.add(plane);
 
+
+const plane2 = new THREE.Mesh(plane_geo, plane_mat);
+plane2.receiveShadow = true;
+plane2.fog = true;
+//scene.add(plane2);
+
+function AnimPlane()
+{
+    plane2.geometry.attributes.position.array[0] -= 5 * Math.random();
+    plane2.geometry.attributes.position.array[1] -= 5 * Math.random();
+    plane2.geometry.attributes.position.array[2] -= 5 * Math.random();
+
+    var lastZpos = plane2.geometry.attributes.position.array.length - 1;
+    plane2.geometry.attributes.position.array[lastZpos] += 10 * Math.random();
+
+    plane2.geometry.attributes.position.needsUpdate = true;
+}
+
 const gridHelper = new THREE.GridHelper(30, 30);
 scene.add(gridHelper);
 
 const tor_geo = new THREE.TorusGeometry(2, 1, 16, 64);
 const tor_mat = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-const torus = new THREE.Mesh(tor_geo, tor_mat);
+const torus = new THREE.Mesh(tor_geo, shaderMat);
 torus.position.set(5, 5, 10);
 torus.castShadow = true;
 torus.fog = true;
@@ -56,6 +99,81 @@ cyl.position.set(-5,5,-5);
 cyl.castShadow = true;
 cyl.fog = true;
 scene.add(cyl);
+
+const sun_geo = new THREE.SphereGeometry(10, 32, 32);
+const sun_mat = new THREE.MeshStandardMaterial({ color: 0xFFFF00 });
+const sun = new THREE.Mesh(sun_geo, sun_mat);
+sun.position.set(0, 10, 0);
+sun.castShadow = true;
+sun.fog = true;
+scene.add(sun);
+
+const mercury_geo = new THREE.SphereGeometry(.03, 32, 32);
+const mercury_mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+const mercury = new THREE.Mesh(mercury_geo, mercury_mat);
+mercury.position.set(sun.position.x + 10.4, 10, 0);
+mercury.castShadow = true;
+mercury.fog = true;
+
+const mercuryOrbit = new THREE.Object3D();
+mercuryOrbit.add(mercury);
+scene.add(mercuryOrbit);
+
+const venus_geo = new THREE.SphereGeometry(.095, 32, 32);
+const venus_mat = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+const venus = new THREE.Mesh(venus_geo, venus_mat);
+venus.position.set(sun.position.x + 10.72, 10, 0);
+venus.castShadow = true;
+venus.fog = true;
+
+const venusOrbit = new THREE.Object3D();
+venusOrbit.add(venus);
+scene.add(venusOrbit);
+
+const earth_geo = new THREE.SphereGeometry(.1, 32, 32);
+const earth_mat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+const earth = new THREE.Mesh(earth_geo, earth_mat);
+earth.position.set(sun.position.x + 11, 10, 0);
+earth.castShadow = true;
+earth.fog = true;
+
+const earthOrbit = new THREE.Object3D();
+earthOrbit.add(earth);
+scene.add(earthOrbit);
+
+
+const mars_geo = new THREE.SphereGeometry(.08, 32, 32);
+const mars_mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+const mars = new THREE.Mesh(mars_geo, mars_mat);
+mars.position.set(sun.position.x + 11.5, 10, 0);
+mars.castShadow = true;
+mars.fog = true;
+
+const marsOrbit = new THREE.Object3D();
+marsOrbit.add(mars);
+scene.add(marsOrbit);
+
+const jupiter_geo = new THREE.SphereGeometry(1, 32, 32);
+const jupiter_mat = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+const jupiter = new THREE.Mesh(jupiter_geo, jupiter_mat);
+jupiter.position.set(sun.position.x + 15, 10, 0);
+jupiter.castShadow = true;
+jupiter.fog = true;
+
+const jupiterOrbit = new THREE.Object3D();
+jupiterOrbit.add(jupiter);
+scene.add(jupiterOrbit);
+
+const saturn_geo = new THREE.SphereGeometry(3, 32, 32);
+const saturn_mat = new THREE.MeshStandardMaterial({ color: 0xFFFF00 });
+const saturn = new THREE.Mesh(saturn_geo, saturn_mat);
+saturn.position.set(sun.position.x + 19.5, 10, 0);
+saturn.castShadow = true;
+saturn.fog = true;
+
+const saturnOrbit = new THREE.Object3D();
+saturnOrbit.add(saturn);
+scene.add(saturnOrbit);
 
 //gui
 const gui = new DAT.GUI();
@@ -106,12 +224,21 @@ gui.add(gui_op_intensity, 'intensity', 0.0, 1.0);
 
 
 
-
 function animate(time) {
     directionalLight.angle = gui_op_angle.angle;
     directionalLight.pneumbra = gui_op_pneumbra.pneumbra;
     directionalLight.intensity = gui_op_intensity.intensity;
     directionalLightHelper.update();
+
+    //AnimPlane();
+
+    sun.rotateY(0.1);
+    mercuryOrbit.rotateY(0.01);
+    venusOrbit.rotateY(0.02);
+    earthOrbit.rotateY(0.1);
+    marsOrbit.rotateY(0.1);
+    jupiterOrbit.rotateY(0.1);
+    saturnOrbit.rotateY(0.1);
 
 
     torus.rotation.x = time / 1000;
