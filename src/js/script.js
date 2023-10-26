@@ -28,11 +28,47 @@ const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
 
 const scene = new THREE.Scene();
 
+const textureLoader = new THREE.TextureLoader();
 const cubeLoader = new THREE.CubeTextureLoader();
-var grid_img = document.getElementById('grid').src;
-var top_img = document.getElementById('top').src;
-var bottom_img = document.getElementById('bottom').src;
-scene.background = cubeLoader.load([grid_img, grid_img, top_img, bottom_img, grid_img, grid_img]);
+
+var stars_img = document.getElementById('stars').src;
+
+scene.background = cubeLoader.load([stars_img, stars_img, stars_img, stars_img, stars_img, stars_img]);
+
+var sun_img_el = document.getElementById('sun').src;
+
+var mer_img_el = document.getElementById('mercury').src;
+var ven_img_el = document.getElementById('venus').src;
+var ear_img_el = document.getElementById('earth').src;
+
+var moo_img_el = document.getElementById('moon').src;
+
+var mar_img_el = document.getElementById('mars').src;
+var jup_img_el = document.getElementById('jupiter').src;
+var sat_img_el = document.getElementById('saturn').src;
+
+var sat_ring_img_el = document.getElementById('satring').src;
+
+var ura_img_el = document.getElementById('uranus').src;
+var nep_img_el = document.getElementById('neptune').src;
+
+
+var sun_img = textureLoader.load(sun_img_el);
+
+var mer_img = textureLoader.load(mer_img_el);
+var ven_img = textureLoader.load(ven_img_el);
+var ear_img = textureLoader.load(ear_img_el);
+
+var moo_img = textureLoader.load(moo_img_el);
+
+var mar_img = textureLoader.load(mar_img_el);
+var jup_img = textureLoader.load(jup_img_el);
+var sat_img = textureLoader.load(sat_img_el);
+
+var sat_ring_img = textureLoader.load(sat_ring_img_el);
+
+var ura_img = textureLoader.load(ura_img_el);
+var nep_img = textureLoader.load(nep_img_el);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -47,14 +83,6 @@ const OrbControls = new OrbitControls(camera, renderer.domElement);
 camera.position.set(-10, 30, 30);
 OrbControls.update();
 
-//shaders
-
-const shaderMat = new THREE.ShaderMaterial({
-    vertexShader: document.getElementById('vertexShader').textContent,
-    fragmentShader: document.getElementById('fragmentShader').textContent
-});
-
-
 const plane_geo = new THREE.PlaneGeometry(30, 30);
 const plane_mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
 const plane = new THREE.Mesh(plane_geo, plane_mat);
@@ -64,54 +92,46 @@ plane.fog = true;
 scene.add(plane);
 
 
-const plane2 = new THREE.Mesh(plane_geo, plane_mat);
-plane2.receiveShadow = true;
-plane2.fog = true;
-//scene.add(plane2);
-
-function AnimPlane()
-{
-    plane2.geometry.attributes.position.array[0] -= 5 * Math.random();
-    plane2.geometry.attributes.position.array[1] -= 5 * Math.random();
-    plane2.geometry.attributes.position.array[2] -= 5 * Math.random();
-
-    var lastZpos = plane2.geometry.attributes.position.array.length - 1;
-    plane2.geometry.attributes.position.array[lastZpos] += 10 * Math.random();
-
-    plane2.geometry.attributes.position.needsUpdate = true;
-}
-
 const gridHelper = new THREE.GridHelper(30, 30);
 scene.add(gridHelper);
 
-/*
-const tor_geo = new THREE.TorusGeometry(2, 1, 16, 64);
-const tor_mat = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-const torus = new THREE.Mesh(tor_geo, shaderMat);
-torus.position.set(5, 5, 10);
-torus.castShadow = true;
-torus.fog = true;
-scene.add(torus);
+const sun_shader = new THREE.ShaderMaterial({
+    uniforms: {
+        time: { value: 1.0 },
+    },
+    fragmentShader: document.getElementById('sunShader').textContent
+});
 
-const cyl_geo = new THREE.CylinderGeometry(3.75, .15, 5, 20);
-const cyl_mat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
-const cyl = new THREE.Mesh(cyl_geo, cyl_mat);
-cyl.position.set(-5,5,-5);
-cyl.castShadow = true;
-cyl.fog = true;
-scene.add(cyl);
-*/
-
-const sun_geo = new THREE.SphereGeometry(10, 32, 32);
-const sun_mat = new THREE.MeshStandardMaterial({ color: 0xFFFF00 });
-const sun = new THREE.Mesh(sun_geo, sun_mat);
-sun.position.set(0, 10, 0);
-sun.castShadow = true;
-sun.fog = true;
+const sunGeometry = new THREE.SphereGeometry(3, 32, 32);
+const sunMaterial = new THREE.MeshBasicMaterial({ map: sun_img, emissive: 0xffd700 });
+const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
+// Add a wavy effect to the sun
+const waveShader = new THREE.ShaderMaterial({
+    uniforms: {
+        time: { type: "f", value: 1.0 },
+    },
+    vertexShader: `
+        void main() {
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    `,
+    fragmentShader: `
+        uniform float time;
+        void main() {
+            float displacement = sin(position.x * 10.0 + time) * 0.1;
+            vec3 newPosition = position + vec3(displacement, 0.0, 0.0);
+            gl_FragColor = vec4(newPosition, 1.0);
+        }
+    `
+});
+
+sun.material = waveShader;
+
 const mercury_geo = new THREE.SphereGeometry(.1, 32, 32);
-const mercury_mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+const mercury_mat = new THREE.MeshStandardMaterial({ map: mer_img});
 const mercury = new THREE.Mesh(mercury_geo, mercury_mat);
 mercury.position.set(sun.position.x + 12, 10, 0);
 mercury.castShadow = true;
@@ -122,7 +142,7 @@ mercuryOrbit.add(mercury);
 scene.add(mercuryOrbit);
 
 const venus_geo = new THREE.SphereGeometry(.9, 32, 32);
-const venus_mat = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+const venus_mat = new THREE.MeshStandardMaterial({ map: ven_img });
 const venus = new THREE.Mesh(venus_geo, venus_mat);
 venus.position.set(sun.position.x + 17, 10, 0);
 venus.castShadow = true;
@@ -133,19 +153,32 @@ venusOrbit.add(venus);
 scene.add(venusOrbit);
 
 const earth_geo = new THREE.SphereGeometry(1, 32, 32);
-const earth_mat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+const earth_mat = new THREE.MeshStandardMaterial({ map: ear_img });
 const earth = new THREE.Mesh(earth_geo, earth_mat);
 earth.position.set(sun.position.x + 20, 10, 0);
 earth.castShadow = true;
 earth.fog = true;
 
+const moon_geo = new THREE.SphereGeometry(0.2, 32, 32);
+const moon_mat = new THREE.MeshStandardMaterial({ map: moo_img });
+const moon = new THREE.Mesh(moon_geo, moon_mat);
+moon.position.set(2, 0, 0);
+moon.castShadow = true;
+moon.fog = true;
+
+const moonOrbit = new THREE.Object3D();
+moonOrbit.add(moon);
+moonOrbit.position.copy(earth.position);
+scene.add(moonOrbit);
+
 const earthOrbit = new THREE.Object3D();
 earthOrbit.add(earth);
+earthOrbit.add(moonOrbit);
 scene.add(earthOrbit);
 
 
 const mars_geo = new THREE.SphereGeometry(.8, 32, 32);
-const mars_mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+const mars_mat = new THREE.MeshStandardMaterial({ map: mar_img });
 const mars = new THREE.Mesh(mars_geo, mars_mat);
 mars.position.set(sun.position.x + 25, 10, 0);
 mars.castShadow = true;
@@ -156,7 +189,7 @@ marsOrbit.add(mars);
 scene.add(marsOrbit);
 
 const jupiter_geo = new THREE.SphereGeometry(5, 32, 32);
-const jupiter_mat = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+const jupiter_mat = new THREE.MeshStandardMaterial({ map: jup_img });
 const jupiter = new THREE.Mesh(jupiter_geo, jupiter_mat);
 jupiter.position.set(sun.position.x + 50, 10, 0);
 jupiter.castShadow = true;
@@ -167,18 +200,25 @@ jupiterOrbit.add(jupiter);
 scene.add(jupiterOrbit);
 
 const saturn_geo = new THREE.SphereGeometry(3, 32, 32);
-const saturn_mat = new THREE.MeshStandardMaterial({ color: 0xFFFF00 });
+const saturn_mat = new THREE.MeshStandardMaterial({ map: sat_img });
 const saturn = new THREE.Mesh(saturn_geo, saturn_mat);
 saturn.position.set(sun.position.x + 75, 10, 0);
 saturn.castShadow = true;
 saturn.fog = true;
 
+const saturn_ring_geo = new THREE.PlaneGeometry(12, 12);
+const saturn_ring_mat = new THREE.MeshStandardMaterial({ map: sat_ring_img, side: THREE.DoubleSide });
+const saturn_ring = new THREE.Mesh(saturn_ring_geo, saturn_ring_mat);
+saturn_ring.rotation.x = Math.PI / 2;
+saturn_ring.position.set(saturn.position.x, saturn.position.y, saturn.position.z);
+
 const saturnOrbit = new THREE.Object3D();
 saturnOrbit.add(saturn);
+saturnOrbit.add(saturn_ring);
 scene.add(saturnOrbit);
 
 const uranus_geo = new THREE.SphereGeometry(2, 32, 32);
-const uranus_mat = new THREE.MeshStandardMaterial({ color: 0x0000FF });
+const uranus_mat = new THREE.MeshStandardMaterial({ map: ura_img });
 const uranus = new THREE.Mesh(uranus_geo, uranus_mat);
 uranus.position.set(sun.position.x + 100, 10, 0);
 uranus.castShadow = true;
@@ -189,7 +229,7 @@ uranusOrbit.add(uranus);
 scene.add(uranusOrbit);
 
 const neptune_geo = new THREE.SphereGeometry(2, 32, 32);
-const neptune_mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+const neptune_mat = new THREE.MeshStandardMaterial({ map: nep_img});
 const neptune = new THREE.Mesh(neptune_geo, neptune_mat);
 neptune.position.set(sun.position.x + 125, 10, 0);
 neptune.castShadow = true;
@@ -253,17 +293,26 @@ gui.add(gui_op_intensity, 'intensity', 0.0, 1.0);
 
 
 function animate(time) {
+
     directionalLight.angle = gui_op_angle.angle;
     directionalLight.pneumbra = gui_op_pneumbra.pneumbra;
     directionalLight.intensity = gui_op_intensity.intensity;
     directionalLightHelper.update();
 
-    //AnimPlane();
 
-    sun.rotateY(0.1);
+    // Rotate the sun
+    sun.rotation.x += 0.005;
+    sun.rotation.y += 0.005;
+
+    // Update the wavy effect
+    waveShader.uniforms.time.value += 0.01;
+
     mercuryOrbit.rotateY(0.002);
     venusOrbit.rotateY(0.006);
+
     earthOrbit.rotateY(0.01);
+    moonOrbit.rotation.y += 0.01;
+
     marsOrbit.rotateY(0.008);
     jupiterOrbit.rotateY(0.0022);
     saturnOrbit.rotateY(0.0011);

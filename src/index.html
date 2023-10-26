@@ -6,21 +6,42 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <img id="grid" src="./img/grid.jpg" style="display: none; width: 0; height: 0;">
-    <img id="top" src="./img/top.png" style="display: none; width: 0; height: 0;">
-    <img id="bottom" src="./img/bottom.png" style="display: none; width: 0; height: 0;">
+    <img id="stars" src="./img/stars.jpg" style="display: none; width: 0; height: 0;">
+    <img id="sun" src="./img/sun.jpg" style="display: none; width: 0; height: 0;">
+
+    <img id="mercury" src="./img/mercury.jpg" style="display: none; width: 0; height: 0;">
+    <img id="venus" src="./img/venus.jpg" style="display: none; width: 0; height: 0;">
+    <img id="earth" src="./img/earth.jpg" style="display: none; width: 0; height: 0;">
+
+    <img id="moon" src="./img/moon.jpg" style="display: none; width: 0; height: 0;">
+
+    <img id="mars" src="./img/mars.jpg" style="display: none; width: 0; height: 0;">
+    <img id="jupiter" src="./img/jupiter.jpg" style="display: none; width: 0; height: 0;">
+    <img id="saturn" src="./img/saturn.jpg" style="display: none; width: 0; height: 0;">
+
+    <img id="satring" src="./img/satring.png" style="display: none; width: 0; height: 0;">
+
+    <img id="uranus" src="./img/uranus.jpg" style="display: none; width: 0; height: 0;">
+    <img id="neptune" src="./img/neptune.jpg" style="display: none; width: 0; height: 0;">
+
 
     <script id="vertexShader" type="vertex">
-        void main() {
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
     </script>
 
-    <script id="fragmentShader" type="fragment">
-        void main() {
-            gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);
-        }
+    <script id="sunShader" type="fragment">
+        uniform float time;
 
+        void main() {
+            vec2 p = gl_FragCoord.xy / resolution.xy;
+            vec3 sunColor = vec3(1.0, 0.8, 0.0); // Sun color
+            
+            // Simulate waves using a sine wave
+            float wave = sin(p.x * 10.0 + time) * 0.1;
+            
+            vec3 finalColor = sunColor + vec3(wave);
+            
+            gl_FragColor = vec4(finalColor, 1.0);
+        }
     </script>
 
     <script src="./js/script.js" type="module"></script>
