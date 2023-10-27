@@ -101,6 +101,7 @@ const sun = new THREE.Mesh(sunGeometry, sunSurfaceMaterial);
 sun.position.set(0, 10, 0);
 sunGlow.position.set(0, 10, 0);
 sunGlow.material.transparent = true;
+sunGlow.material.castShadow = true;
 scene.add(sun);
 scene.add(sunGlow);
 
@@ -108,6 +109,7 @@ const mercury_geo = new THREE.SphereGeometry(.1, 32, 32);
 const mercury_mat = new THREE.MeshStandardMaterial({ map: mer_img});
 const mercury = new THREE.Mesh(mercury_geo, mercury_mat);
 mercury.position.set(sun.position.x + 12, 10, 0);
+mercury.receiveShadow = true;
 mercury.castShadow = true;
 mercury.fog = true;
 
@@ -119,6 +121,7 @@ const venus_geo = new THREE.SphereGeometry(.9, 32, 32);
 const venus_mat = new THREE.MeshStandardMaterial({ map: ven_img });
 const venus = new THREE.Mesh(venus_geo, venus_mat);
 venus.position.set(sun.position.x + 17, 10, 0);
+venus.receiveShadow = true;
 venus.castShadow = true;
 venus.fog = true;
 
@@ -130,6 +133,7 @@ const earth_geo = new THREE.SphereGeometry(1, 32, 32);
 const earth_mat = new THREE.MeshStandardMaterial({ map: ear_img });
 const earth = new THREE.Mesh(earth_geo, earth_mat);
 earth.position.set(sun.position.x + 30, 10, 0);
+earth.receiveShadow = true;
 earth.castShadow = true;
 earth.fog = true;
 
@@ -137,6 +141,7 @@ const moon_geo = new THREE.SphereGeometry(0.2, 32, 32);
 const moon_mat = new THREE.MeshStandardMaterial({ map: moo_img });
 const moon = new THREE.Mesh(moon_geo, moon_mat);
 moon.position.set(2, 0, 0);
+moon.receiveShadow = true;
 moon.castShadow = true;
 moon.fog = true;
 
@@ -161,6 +166,7 @@ const mars_geo = new THREE.SphereGeometry(.8, 32, 32);
 const mars_mat = new THREE.MeshStandardMaterial({ map: mar_img });
 const mars = new THREE.Mesh(mars_geo, mars_mat);
 mars.position.set(sun.position.x + 40, 10, 0);
+mars.receiveShadow = true;
 mars.castShadow = true;
 mars.fog = true;
 
@@ -172,6 +178,7 @@ const jupiter_geo = new THREE.SphereGeometry(5, 32, 32);
 const jupiter_mat = new THREE.MeshStandardMaterial({ map: jup_img });
 const jupiter = new THREE.Mesh(jupiter_geo, jupiter_mat);
 jupiter.position.set(sun.position.x + 100, 10, 0);
+jupiter.receiveShadow = true;
 jupiter.castShadow = true;
 jupiter.fog = true;
 
@@ -183,6 +190,7 @@ const saturn_geo = new THREE.SphereGeometry(3, 32, 32);
 const saturn_mat = new THREE.MeshStandardMaterial({ map: sat_img });
 const saturn = new THREE.Mesh(saturn_geo, saturn_mat);
 saturn.position.set(sun.position.x + 150, 10, 0);
+saturn.receiveShadow = true;
 saturn.castShadow = true;
 saturn.fog = true;
 
@@ -201,6 +209,7 @@ const uranus_geo = new THREE.SphereGeometry(2, 32, 32);
 const uranus_mat = new THREE.MeshStandardMaterial({ map: ura_img });
 const uranus = new THREE.Mesh(uranus_geo, uranus_mat);
 uranus.position.set(sun.position.x + 200, 10, 0);
+uranus.receiveShadow = true;
 uranus.castShadow = true;
 uranus.fog = true;
 
@@ -212,6 +221,7 @@ const neptune_geo = new THREE.SphereGeometry(2, 32, 32);
 const neptune_mat = new THREE.MeshStandardMaterial({ map: nep_img});
 const neptune = new THREE.Mesh(neptune_geo, neptune_mat);
 neptune.position.set(sun.position.x + 250, 10, 0);
+neptune.receiveShadow = true;
 neptune.castShadow = true;
 neptune.fog = true;
 
