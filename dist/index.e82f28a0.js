@@ -634,18 +634,24 @@ const OrbControls = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.dom
 camera.position.set(0, 350, 0);
 OrbControls.update();
 const sunGeometry = new _three.SphereGeometry(10, 32, 32);
-const sunMaterial = new _three.MeshStandardMaterial({
+const glowGeometry = new _three.SphereGeometry(10.15, 32, 32);
+const sunSurfaceMaterial = new _three.MeshStandardMaterial({
     map: sun_img,
     normalMap: sunnorm_img
 });
-const sun = new _three.Mesh(sunGeometry, sunMaterial);
-sun.position.set(0, 0, 0);
+const sunMaterial = new _three.MeshStandardMaterial({
+    map: sun_img,
+    normalMap: sunnorm_img,
+    emissive: 0xFFFFFF,
+    emissiveIntensity: .50
+});
+const sunGlow = new _three.Mesh(glowGeometry, sunMaterial);
+const sun = new _three.Mesh(sunGeometry, sunSurfaceMaterial);
+sun.position.set(0, 10, 0);
+sunGlow.position.set(0, 10, 0);
+sunGlow.material.transparent = true;
 scene.add(sun);
-const sunLight = new _three.PointLight(0xffd700, 5.0, 1000);
-sunLight.position.set(0, 10, 0);
-sunLight.castShadow = true;
-scene.add(sunLight);
-sunLight.add(sun);
+scene.add(sunGlow);
 const mercury_geo = new _three.SphereGeometry(.1, 32, 32);
 const mercury_mat = new _three.MeshStandardMaterial({
     map: mer_img
@@ -768,8 +774,8 @@ const ambientLight = new _three.AmbientLight(0xFFFFFF, .25);
 scene.add(ambientLight);
 function animate(time) {
     sun.rotation.y += 0.005;
-    sunMaterial.displacementScale = Math.sin(time) * 1;
-    sunMaterial.displacementBias = Math.cos(time) * 1;
+    sunMaterial.displacementScale = 0.1 * Math.sin(time * 0.1);
+    sunMaterial.displacementBias = 0.1 * Math.cos(time * 0.1);
     mercuryOrbit.rotateY(0.002);
     venusOrbit.rotateY(0.006);
     venus.rotation.y += 0.001;

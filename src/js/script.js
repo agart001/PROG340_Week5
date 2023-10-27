@@ -82,16 +82,27 @@ camera.position.set(0, 350, 0);
 OrbControls.update();
 
 const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
-const sunMaterial = new THREE.MeshStandardMaterial({ map: sun_img, normalMap: sunnorm_img });
-const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(0, 0, 0);
-scene.add(sun);
+const glowGeometry = new THREE.SphereGeometry(10.15, 32, 32);
 
-const sunLight = new THREE.PointLight(0xffd700, 5.0, 1000);
-sunLight.position.set(0, 10, 0);
-sunLight.castShadow = true;
-scene.add(sunLight);
-sunLight.add(sun);
+const sunSurfaceMaterial = new THREE.MeshStandardMaterial({
+    map: sun_img,
+    normalMap: sunnorm_img,
+  });
+
+const sunMaterial = new THREE.MeshStandardMaterial({
+  map: sun_img,
+  normalMap: sunnorm_img,
+  emissive: 0xFFFFFF, // Set the emissive color to your desired color
+  emissiveIntensity: .50, // Adjust the intensity as needed
+});
+
+const sunGlow = new THREE.Mesh(glowGeometry, sunMaterial);
+const sun = new THREE.Mesh(sunGeometry, sunSurfaceMaterial);
+sun.position.set(0, 10, 0);
+sunGlow.position.set(0, 10, 0);
+sunGlow.material.transparent = true;
+scene.add(sun);
+scene.add(sunGlow);
 
 const mercury_geo = new THREE.SphereGeometry(.1, 32, 32);
 const mercury_mat = new THREE.MeshStandardMaterial({ map: mer_img});
@@ -219,8 +230,8 @@ scene.add(ambientLight);
 function animate(time) {
 
     sun.rotation.y += 0.005;
-    sunMaterial.displacementScale = Math.sin(time) * 1;
-    sunMaterial.displacementBias = Math.cos(time) * 1; 
+    sunMaterial.displacementScale = 0.1 * Math.sin(time * 0.1);
+    sunMaterial.displacementBias = 0.1 * Math.cos(time * 0.1);
 
     mercuryOrbit.rotateY(0.002);
 
