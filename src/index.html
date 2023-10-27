@@ -24,26 +24,6 @@
     <img id="uranus" src="./img/uranus.jpg" style="display: none; width: 0; height: 0;">
     <img id="neptune" src="./img/neptune.jpg" style="display: none; width: 0; height: 0;">
 
-
-    <script id="vertexShader" type="vertex">
-    </script>
-
-    <script id="sunShader" type="fragment">
-        uniform float time;
-
-        void main() {
-            vec2 p = gl_FragCoord.xy / resolution.xy;
-            vec3 sunColor = vec3(1.0, 0.8, 0.0); // Sun color
-            
-            // Simulate waves using a sine wave
-            float wave = sin(p.x * 10.0 + time) * 0.1;
-            
-            vec3 finalColor = sunColor + vec3(wave);
-            
-            gl_FragColor = vec4(finalColor, 1.0);
-        }
-    </script>
-
     <script src="./js/script.js" type="module"></script>
 </body>
 </html>
