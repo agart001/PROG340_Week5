@@ -5,20 +5,15 @@ import * as DAT from "dat.gui";
 
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const duckUrl = new URL('../assets/Duck.gltf', import.meta.url);
-const assetLoader = new GLTFLoader();
-assetLoader.load(
-    duckUrl.href,
-    function(gltf) {
-        const model = gltf.scene;
-        scene.add(model);
-        model.position.set(0, 0, 0);
-    },
-    undefined,
-    function(error) {
-        console.error(error);
-    }
-);
+//star source : https://www.cgtrader.com/items/829076/download-page
+const starUrl = new URL('../assets/star.glb', import.meta.url).href;
+const glbLoader = new GLTFLoader();
+glbLoader.load(starUrl, (gltf) => {
+    const star = gltf.scene;
+    scene.add(star);
+    star.position.set(0, 50, 0);
+    star.scale.set(0.5, 0.5, 0.5);
+});
 
 var height = window.innerHeight;
 var width = window.innerWidth;
