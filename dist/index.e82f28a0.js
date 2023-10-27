@@ -639,7 +639,7 @@ const sunMaterial = new _three.MeshStandardMaterial({
     normalMap: sunnorm_img
 });
 const sun = new _three.Mesh(sunGeometry, sunMaterial);
-sun.position.set(0, 10, 0);
+sun.position.set(0, 0, 0);
 scene.add(sun);
 const sunLight = new _three.PointLight(0xffd700, 5.0, 1000);
 sunLight.position.set(0, 10, 0);

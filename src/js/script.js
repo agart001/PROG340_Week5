@@ -84,7 +84,7 @@ OrbControls.update();
 const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
 const sunMaterial = new THREE.MeshStandardMaterial({ map: sun_img, normalMap: sunnorm_img });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(0, 10, 0);
+sun.position.set(0, 0, 0);
 scene.add(sun);
 
 const sunLight = new THREE.PointLight(0xffd700, 5.0, 1000);
