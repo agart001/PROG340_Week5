@@ -35,6 +35,7 @@ var stars_img = document.getElementById('stars').src;
 scene.background = cubeLoader.load([stars_img, stars_img, stars_img, stars_img, stars_img, stars_img]);
 
 var sun_img_el = document.getElementById('sun').src;
+var sunnorm_img_el = document.getElementById('sunnorm').src;
 
 var mer_img_el = document.getElementById('mercury').src;
 var ven_img_el = document.getElementById('venus').src;
@@ -53,6 +54,7 @@ var nep_img_el = document.getElementById('neptune').src;
 
 
 var sun_img = textureLoader.load(sun_img_el);
+var sunnorm_img = textureLoader.load(sunnorm_img_el);
 
 var mer_img = textureLoader.load(mer_img_el);
 var ven_img = textureLoader.load(ven_img_el);
@@ -80,7 +82,7 @@ camera.position.set(0, 350, 0);
 OrbControls.update();
 
 const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
-const sunMaterial = new THREE.MeshBasicMaterial({ map: sun_img, emissive: 0xffd700 });
+const sunMaterial = new THREE.MeshStandardMaterial({ map: sun_img, normalMap: sunnorm_img });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 sun.position.set(0, 10, 0);
 scene.add(sun);
@@ -217,6 +219,8 @@ scene.add(ambientLight);
 function animate(time) {
 
     sun.rotation.y += 0.005;
+    sunMaterial.displacementScale = Math.sin(time) * 1;
+    sunMaterial.displacementBias = Math.cos(time) * 1; 
 
     mercuryOrbit.rotateY(0.002);
 
